@@ -1,0 +1,30 @@
+{
+  "name": "rtsearch-monorepo",
+  "version": "0.1.0",
+  "author": "SquadyAI contributors",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,backend -c yellow,cyan \"yarn workspace @rtsearch/web dev\" \"yarn workspace @rtsearch/backend dev\"",
+    "dev:web": "yarn workspace @rtsearch/web dev",
+    "dev:backend": "yarn workspace @rtsearch/backend dev",
+    "build": "yarn workspaces foreach -At run build",
+    "start:backend": "yarn workspace @rtsearch/backend start",
+    "prisma:generate": "yarn workspace @rtsearch/backend prisma:generate",
+    "prisma:deploy": "yarn workspace @rtsearch/backend prisma:deploy",
+    "lint": "yarn workspaces foreach -At run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "packageManager": "yarn@4.9.2",
+  "engines": {
+    "node": ">=22.0.0",
+    "yarn": ">=4.9.2"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1"
+  }
+}

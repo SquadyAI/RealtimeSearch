@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Engine {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  enabled   Boolean    @default(true)
+  priority  Int        @default(0)
+  config    Json?
+  httpProxy String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  apikeyId  String?
+  type      EngineType @default(search)
+  apikey    ApiKey?    @relation(fields: [apikeyId], references: [id])
+
+  @@index([apikeyId])
+  @@index([priority, enabled])
+  @@index([type, enabled])
+}
+
+model ApiKey {
+  id           String     @id @default(cuid())
+  key          String
+  label        String?
+  active       Boolean    @default(true)
+  rps          Int        @default(10)
+  monthlyQuota Int        @default(10000)
+  usageMonth   String?
+  usedCount    Int        @default(0)
+  lastUsedAt   DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  type         EngineType @default(search)
+  engines      Engine[]
+
+  @@index([key])
+  @@index([type, active])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id           String     @id @default(cuid())
+  username     String     @unique
+  passwordHash String
+  role         Role       @default(user)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  apiTokens    ApiToken[]
+}
+
+model ApiToken {
+  id          String             @id @default(cuid())
+  userId      String
+  name        String
+  token       String             @unique
+  permissions ApiTokenPermission
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, token])
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum EngineType {
+  search
+  translate
+}
+
+enum ApiTokenPermission {
+  read
+  write
+  admin
+}

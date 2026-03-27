@@ -1,0 +1,122 @@
+{
+  "test_scenarios": {
+    "basic": {
+      "description": "基础负载测试 - 适合日常性能验证",
+      "concurrent_users": 10,
+      "requests_per_user": 10,
+      "request_interval": 1.0,
+      "timeout": 30,
+      "ramp_up_time": 5
+    },
+    "medium": {
+      "description": "中等负载测试 - 适合压力测试",
+      "concurrent_users": 20,
+      "requests_per_user": 20,
+      "request_interval": 0.5,
+      "timeout": 30,
+      "ramp_up_time": 10
+    },
+    "heavy": {
+      "description": "高负载测试 - 适合极限测试",
+      "concurrent_users": 50,
+      "requests_per_user": 30,
+      "request_interval": 0.2,
+      "timeout": 30,
+      "ramp_up_time": 15
+    },
+    "tlb_burst": {
+      "description": "TLB突发压力测试 - 测试令牌桶突发处理能力",
+      "burst_users": 50,
+      "sustained_users": 0,
+      "burst_duration": 30,
+      "sustained_duration": 0,
+      "request_interval": 0.1,
+      "timeout": 15,
+      "expected_rps": 20,
+      "expected_max_tokens": 10
+    },
+    "tlb_sustained": {
+      "description": "TLB持续压力测试 - 测试令牌桶持续负载能力",
+      "burst_users": 0,
+      "sustained_users": 20,
+      "burst_duration": 0,
+      "sustained_duration": 120,
+      "request_interval": 0.5,
+      "timeout": 15,
+      "expected_rps": 20,
+      "expected_max_tokens": 10
+    },
+    "tlb_full": {
+      "description": "TLB完整压力测试 - 突发+持续组合测试",
+      "burst_users": 50,
+      "sustained_users": 20,
+      "burst_duration": 30,
+      "sustained_duration": 120,
+      "request_interval": 0.1,
+      "timeout": 15,
+      "expected_rps": 20,
+      "expected_max_tokens": 10
+    }
+  },
+  "system_config": {
+    "base_url": "http://localhost:8787",
+    "username": "testuser",
+    "password": "testpass123",
+    "test_queries": [
+      "人工智能发展趋势",
+      "机器学习算法",
+      "深度学习框架",
+      "Python编程语言",
+      "JavaScript前端开发",
+      "React框架使用",
+      "Node.js后端开发",
+      "数据库设计原理",
+      "微服务架构",
+      "云计算技术",
+      "区块链应用",
+      "物联网技术",
+      "大数据分析",
+      "网络安全防护",
+      "移动应用开发"
+    ]
+  },
+  "monitoring": {
+    "interval": 5.0,
+    "duration": 300,
+    "metrics_to_track": [
+      "response_time",
+      "success_rate",
+      "error_rate",
+      "tlb_token_usage",
+      "engine_usage_distribution",
+      "rate_limit_triggers"
+    ]
+  },
+  "expected_performance": {
+    "max_response_time": 5.0,
+    "min_success_rate": 95.0,
+    "max_error_rate": 5.0,
+    "tlb_efficiency": 0.8,
+    "load_balance_ratio": 0.7
+  },
+  "test_guidelines": {
+    "before_test": [
+      "确保服务已启动并运行正常",
+      "检查数据库连接状态",
+      "验证API密钥配置",
+      "确认TLB配置正确"
+    ],
+    "during_test": [
+      "监控系统资源使用情况",
+      "观察TLB令牌桶状态",
+      "记录错误和异常",
+      "关注响应时间变化"
+    ],
+    "after_test": [
+      "分析测试报告",
+      "检查系统日志",
+      "验证TLB恢复情况",
+      "总结性能瓶颈"
+    ]
+  }
+}

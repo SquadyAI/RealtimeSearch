@@ -1,0 +1,61 @@
+# Dependencies
+node_modules
+**/node_modules
+apps/*/node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+logs
+
+
+.next
+.nuxt
+.parcel-cache
+.cache
+coverage
+.nyc_output
+
+# Environment and config
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
+# Development files
+.git
+.gitignore
+README.md
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Test files
+test/
+pythontest
+.pytest_cache
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+
+# CI/CD
+.forgejo
+.github
+.github/workflows
+.forgejo/workflows
+
+# Package manager
+package-lock.json
+pnpm-lock.yaml
+
+# Temporary files
+*.tmp
+*.temp
+.cache

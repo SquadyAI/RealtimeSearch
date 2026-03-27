@@ -1,0 +1,87 @@
+# 后端 Dockerfile
+
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# 设置网络超时和重试
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+# 启用Corepack并准备Yarn（使用官方源，设置较长超时）
+RUN corepack enable && \
+    export COREPACK_DEFAULT_TO_LATEST=0 && \
+    corepack prepare yarn@4.9.2 --activate || \
+    (sleep 5 && corepack prepare yarn@4.9.2 --activate) || \
+    (sleep 10 && corepack prepare yarn@4.9.2 --activate)
+
+# 配置npm镜像源
+RUN npm config set registry https://registry.npmmirror.com/
+
+# 复制根目录的package.json和yarn.lock
+COPY package.json yarn.lock ./
+
+# 复制整个项目结构（因为需要workspace配置）
+COPY . .
+
+# 创建/覆盖 .yarnrc.yml 配置文件以使用镜像源
+RUN echo "nodeLinker: node-modules" > .yarnrc.yml && \
+    echo "npmRegistryServer: \"https://registry.npmmirror.com/\"" >> .yarnrc.yml && \
+    echo "httpTimeout: 60000" >> .yarnrc.yml
+
+# 安装依赖
+RUN yarn install
+
+# 生成Prisma客户端
+RUN yarn workspace @rtsearch/backend prisma:generate
+
+# 构建后端
+RUN yarn workspace @rtsearch/backend build
+
+# 生产运行阶段
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
+# 启用Corepack并准备Yarn
+RUN corepack enable && \
+    corepack prepare yarn@4.9.2 --activate || \
+    (sleep 5 && corepack prepare yarn@4.9.2 --activate)
+
+# 复制根目录的package.json和yarn.lock
+COPY package.json yarn.lock ./
+
+# 复制构建产物
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
+COPY --from=builder /app/node_modules ./node_modules
+
+# # 设置环境变量
+# ENV NODE_ENV=production
+# ENV PORT=8787
+# ENV HOST=0.0.0.0
+
+# 暴露后端端口
+EXPOSE 8787
+
+# 创建启动脚本
+COPY <<EOF /app/start.sh
+#!/bin/sh
+set -e
+
+echo "🔄 Starting backend service..."
+
+# 检查是否设置了 DATABASE_URL
+if [ -n "\$DATABASE_URL" ]; then
+    echo "📊 Database URL configured, database initialization will be handled by the application"
+else
+    echo "⚠️  DATABASE_URL not set, running without database"
+fi
+
+# 启动应用
+exec node apps/backend/dist/src/index.mjs
+EOF
+
+RUN chmod +x /app/start.sh
+
+# 启动后端服务
+CMD ["/app/start.sh"]

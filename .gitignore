@@ -1,0 +1,64 @@
+# Node dependencies
+**/node_modules/
+
+# Logs
+**/*.log
+**/*.log.*
+**/*.jsonl
+logs/
+**/logs/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.envrc
+
+# Build outputs
+**/dist/
+**/build/
+**/out/
+coverage/
+**/coverage/
+
+# Caches and temp
+.tmp/
+tmp/
+temp/
+.cache/
+**/.cache/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma / SQLite local databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+
+# Editor/IDE
+.vscode/
+.idea/
+.history/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Lockfiles not used in this repo
+package-lock.json
+pnpm-lock.yaml
+
+# Yarn
+yarn-error.log*
+.yarn-integrity
+
+# Docker artifacts
+*.tar
+
+# Misc
+pythontest
+.cursorignore
+.env.bak
